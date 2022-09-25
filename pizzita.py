@@ -2,19 +2,13 @@ import pandas as pd
 from math import log
 from random import random
 import numpy as np
+from pprint import pprint
 
 INF = 999999
-NUMBER_OF_SERVERS = 10
+NUMBER_OF_SERVERS = 100
 
 def getArrivalTime(_lambda_max, s):
-  t = s
-  while(1):
-    u = random()
-    t = t - ((1/_lambda_max) * log(u))
-    u = random()
-
-    if (u <= (_lambda_max)): 
-      return t
+  return s - ((1/_lambda_max) * log(random()))
 
 def getExecutionTime(_lambda):
   b = 1/_lambda
@@ -49,6 +43,7 @@ in_line_time = []
 departure_time = []
 
 # Se inicia la simulacion
+print('Primera solicitud llega en:', (ta))
 while (1):
   ss_min = min(SS)
   ss_min_index = SS.index(ss_min)
@@ -70,7 +65,7 @@ while (1):
     # Se atiende directamente la solicitud
     if (n <= NUMBER_OF_SERVERS):
       in_line_time.append(0)
-      td = t + getExecutionTime(_lambda_max)
+      td = t + getExecutionTime(_lambda_exp)
       SS[ss_min_index] = td
 
     # Guardamos tiempo de llegada
@@ -89,7 +84,7 @@ while (1):
     else:
       waited_time = t - arrival_time[Nd]
       in_line_time.append(waited_time) 
-      td = t + getExecutionTime(_lambda_max)
+      td = t + getExecutionTime(_lambda_exp)
       SS[ss_min_index] = td
     
     # Guardamos metricas
@@ -105,7 +100,7 @@ while (1):
     if (n > 0):
       waited_time = t - arrival_time[Nd]
       in_line_time.append(waited_time) 
-      td = t + getExecutionTime(_lambda_max) 
+      td = t + getExecutionTime(_lambda_exp) 
       SS[ss_min_index] = td
 
     # Guardamos metricas
@@ -114,4 +109,15 @@ while (1):
   # -> El evento ocurre luego de cerrar el server, ya no atiende
   else:
     Tp = max(t - T, 0)
+    
+    break
+
+# Metricas
+print('(a) Solicitudes atendidas:', len(departure_time))
+print('(b) Tiempo ocupado:', (T + Tp) - sum(iddle_times))
+print('(c) Tiempo libre:', sum(iddle_times))
+print('(d) Tiempo en colas:', sum(in_line_time))
+print('(e) Promedio en colas:', sum(in_line_time)/len(in_line_time))
+print('(f) Por Kahoot')
+print('(g) Salida de ultima solicitud:', departure_time[-1])
 
