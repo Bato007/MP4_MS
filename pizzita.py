@@ -5,7 +5,7 @@ import numpy as np
 from pprint import pprint
 
 INF = 999999
-NUMBER_OF_SERVERS = 100
+NUMBER_OF_SERVERS = 10
 
 def getArrivalTime(_lambda_max, s):
   return s - ((1/_lambda_max) * log(random()))
@@ -20,8 +20,8 @@ def getExecutionTime(_lambda):
 
 # Variables iniciales
 Tp = 0                              # Tiempo luego de cerrar el server
-T = 3600                            # Tiempo de cierre del server
-_lambda_max = 40 * T                # Solicitudes 
+T = 360                            # Tiempo de cierre del server
+_lambda_max = 100 * T                # Solicitudes 
 _lambda_exp = 10                    # Solicitudes que puede atender por segundo
 t = 0                               # Tiempo actual en segundos
 Na = 0                              # Numero de llegadas al tiempo t
@@ -32,10 +32,12 @@ n = 0                               # Cantidad de solicitudes en el sistema
 
 # SYSTEM STATUS INIT
 iddle_times = []
+servers_count = []
 SS = []
 for _ in range(NUMBER_OF_SERVERS):
-  SS.append(INF)
+  SS.append(-1)
   iddle_times.append(0)
+  servers_count.append(0)
 
 ## Variables para las metricas
 arrival_time = []
@@ -52,10 +54,10 @@ while (1):
 
   # -> Solicitud entrante y no es tiempo de cierre
   # if ((ta <= td) and (ta <= T)):
-  if ((ta <= ss_min) and (ta <= T)):
+  if ((ta <= ss_min or ss_min == -1) and (ta <= T)):
 
     # Check para ver si el servidor estaba desocupado
-    if (ss_min == INF): iddle_times[ss_min_index] += ta - t
+    if (ss_min == -1): iddle_times[ss_min_index] += ta - t
 
     t = ta
     Na += 1
@@ -77,10 +79,11 @@ while (1):
     n -= 1
     Nd += 1
 
+    SS[ss_min_index] = -1
 
     # Ya no quedan mas solicitudes en el sistema
-    if (SS.count(INF) >= n):
-      SS[ss_min_index] = INF
+    if (SS.count(-1) >= n):
+      pass
     else:
       waited_time = t - arrival_time[Nd]
       in_line_time.append(waited_time) 
@@ -89,6 +92,7 @@ while (1):
     
     # Guardamos metricas
     departure_time.append(t)
+    servers_count[ss_min_index] += 1
 
   # -> El evento ocurre luego de cerrar el server, pero sigue atendiendo
   elif ((min(ta, ss_min) > T) and (n > 0)):
@@ -105,6 +109,7 @@ while (1):
 
     # Guardamos metricas
     departure_time.append(t)
+    servers_count[ss_min_index] += 1
 
   # -> El evento ocurre luego de cerrar el server, ya no atiende
   else:
@@ -114,6 +119,8 @@ while (1):
 
 # Metricas
 print('(a) Solicitudes atendidas:', len(departure_time))
+for i in range (len(servers_count)):
+  print(i + 1, ' : ', servers_count[i])
 print('(b) Tiempo ocupado:', (T + Tp) - sum(iddle_times))
 print('(c) Tiempo libre:', sum(iddle_times))
 print('(d) Tiempo en colas:', sum(in_line_time))
