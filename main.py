@@ -1,6 +1,7 @@
 import numpy as np
 from math import log
 from random import random
+from pprint import pprint
 
 INF = 999999
 
@@ -17,7 +18,7 @@ def getExecutionTime(_lambda):
 
 # Variables iniciales
 Tp = 0                              # Tiempo luego de cerrar el server
-T = 3600                            # Tiempo de cierre del server
+T = 36                              # Tiempo de cierre del server
 _lambda_max = 40 * T                # Solicitudes 
 _lambda_exp = 100                   # Solicitudes que puede atender por segundo
 t = 0                               # Tiempo actual en segundos
@@ -34,6 +35,7 @@ in_line_time = []
 departure_time = []
 
 # Se inicia la simulacion
+print('Primera solicitud llega en:', (ta))
 while (1):
 
   # -> Solicitud entrante y no es tiempo de cierre
@@ -90,4 +92,13 @@ while (1):
   # -> El evento ocurre luego de cerrar el server, ya no atiende
   else:
     Tp = max(t - T, 0)
+    break
 
+# Metricas
+print('(a) Solicitudes atendidas:', len(departure_time))
+print('(b) Tiempo ocupado:', (T + Tp) - iddle_time)
+print('(c) Tiempo libre:', iddle_time)
+print('(d) Tiempo en colas:', sum(in_line_time))
+print('(e) Promedio en colas:', sum(in_line_time)/len(in_line_time))
+print('(f) Por Kahoot')
+print('(g) Salida de ultima solicitud:', departure_time[-1])
