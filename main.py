@@ -22,9 +22,9 @@ def getExecutionTime(_lambda_max, s):
 # 2400 solicitudes por minuto -> 40 por segundo
 
 # Variables iniciales
-_lambda_max = 40 * 3600             # Solicitudes 
-t = 0                               # Tiempo actual en segundos
 T = 3600                            # Tiempo de cierre del server
+_lambda_max = 40 * T                # Solicitudes 
+t = 0                               # Tiempo actual en segundos
 Na = 0                              # Numero de llegadas al tiempo t
 Nd = 0                              # Numero de salidas al tiempo t             
 ta = getArrivalTime(_lambda_max, t) # Tiempo de llegada de un evento
@@ -63,6 +63,7 @@ while (1):
   elif ((td < ta) and (td <= T)):
     t = td
     n -= 1
+    Nd += 1
 
     # Ya no quedan mas solicitudes en el sistema
     if (n == 0):
@@ -73,13 +74,13 @@ while (1):
       td = t + getExecutionTime(_lambda_max, t) 
     
     # Guardamos metricas
-    Nd += 1
     departure_time.append(t)
 
   # -> El evento ocurre luego de cerrar el server, pero sigue atendiendo
   elif ((min(ta, td) > T) and (n > 0)):
     t = td
     n -= 1
+    Nd += 1
 
     # Si aun no se terminan las solicitudes
     if (n > 0):
@@ -88,7 +89,6 @@ while (1):
       td = t + getExecutionTime(_lambda_max, t) 
 
     # Guardamos metricas
-    Nd += 1
     departure_time.append(t)
 
   # -> El evento ocurre luego de cerrar el server, ya no atiende
