@@ -25,8 +25,10 @@ def getExecutionTime(_lambda):
 # 2400 solicitudes por minuto -> 40 por segundo
 
 # Variables iniciales
+Tp = 0                              # Tiempo luego de cerrar el server
 T = 3600                            # Tiempo de cierre del server
-_lambda_max = 4 * T                 # Solicitudes 
+_lambda_max = 40 * T                # Solicitudes 
+_lambda_exp = 10                    # Solicitudes que puede atender por segundo
 t = 0                               # Tiempo actual en segundos
 Na = 0                              # Numero de llegadas al tiempo t
 Nd = 0                              # Numero de salidas al tiempo t             
@@ -68,7 +70,7 @@ while (1):
     # Se atiende directamente la solicitud
     if (n <= NUMBER_OF_SERVERS):
       in_line_time.append(0)
-      td = t + getExecutionTime(_lambda_max, t)
+      td = t + getExecutionTime(_lambda_max)
       SS[ss_min_index] = td
 
     # Guardamos tiempo de llegada
@@ -87,7 +89,7 @@ while (1):
     else:
       waited_time = t - arrival_time[Nd]
       in_line_time.append(waited_time) 
-      td = t + getExecutionTime(_lambda_max, t)
+      td = t + getExecutionTime(_lambda_max)
       SS[ss_min_index] = td
     
     # Guardamos metricas
@@ -103,7 +105,7 @@ while (1):
     if (n > 0):
       waited_time = t - arrival_time[Nd]
       in_line_time.append(waited_time) 
-      td = t + getExecutionTime(_lambda_max, t) 
+      td = t + getExecutionTime(_lambda_max) 
       SS[ss_min_index] = td
 
     # Guardamos metricas
