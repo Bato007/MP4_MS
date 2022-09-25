@@ -1,29 +1,25 @@
-import pandas as pd
+import numpy as np
 from math import log
 from random import random
 
 INF = 999999
 
 def getArrivalTime(_lambda_max, s):
-  t = s
-  while(1):
-    u = random()
-    t = t - ((1/_lambda_max) * log(u))
-    u = random()
+  return s - ((1/_lambda_max) * log(random()))
 
-    if (u <= (_lambda_max)): 
-      return t
-
-def getExecutionTime(_lambda_max, s):
-  print('wuuu')
-  return 0
+def getExecutionTime(_lambda):
+  b = 1/_lambda
+  exec_time = np.random.exponential(b)
+  return exec_time
 
 # Simulacion
 # 2400 solicitudes por minuto -> 40 por segundo
 
 # Variables iniciales
+Tp = 0                              # Tiempo luego de cerrar el server
 T = 3600                            # Tiempo de cierre del server
 _lambda_max = 40 * T                # Solicitudes 
+_lambda_exp = 100                   # Solicitudes que puede atender por segundo
 t = 0                               # Tiempo actual en segundos
 Na = 0                              # Numero de llegadas al tiempo t
 Nd = 0                              # Numero de salidas al tiempo t             
@@ -54,7 +50,7 @@ while (1):
     # Se atiende directamente la solicitud
     if (n == 1):
       in_line_time.append(0) 
-      td = t + getExecutionTime(_lambda_max, t)
+      td = t + getExecutionTime(_lambda_exp)
 
     # Guardamos tiempo de llegada
     arrival_time.append(t)
@@ -71,7 +67,7 @@ while (1):
     else:
       waited_time = t - arrival_time[Nd]
       in_line_time.append(waited_time) 
-      td = t + getExecutionTime(_lambda_max, t) 
+      td = t + getExecutionTime(_lambda_exp) 
     
     # Guardamos metricas
     departure_time.append(t)
@@ -86,7 +82,7 @@ while (1):
     if (n > 0):
       waited_time = t - arrival_time[Nd]
       in_line_time.append(waited_time) 
-      td = t + getExecutionTime(_lambda_max, t) 
+      td = t + getExecutionTime(_lambda_exp) 
 
     # Guardamos metricas
     departure_time.append(t)
