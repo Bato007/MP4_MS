@@ -1,6 +1,7 @@
 import pandas as pd
 from math import log
 from random import random
+import numpy as np
 
 INF = 999999
 NUMBER_OF_SERVERS = 10
@@ -15,9 +16,10 @@ def getArrivalTime(_lambda_max, s):
     if (u <= (_lambda_max)): 
       return t
 
-def getExecutionTime(_lambda_max, s):
-  print('wuuu')
-  return 0
+def getExecutionTime(_lambda):
+  b = 1/_lambda
+  exec_time = np.random.exponential(b)
+  return exec_time
 
 # Simulacion
 # 2400 solicitudes por minuto -> 40 por segundo
